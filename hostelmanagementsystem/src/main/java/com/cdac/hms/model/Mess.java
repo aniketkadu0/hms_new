@@ -4,7 +4,6 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.OneToOne;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -20,10 +19,10 @@ public class Mess {
 	
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
-	int id;
+	int messId;
+	String messType;
 	String messIncharge;
-	int messContactNumber;
+	String messContactNumber;
 	int price;
-	@OneToOne
-	Hostel hostel;
+	int hostelId;
 }

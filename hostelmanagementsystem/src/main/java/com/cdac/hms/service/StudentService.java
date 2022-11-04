@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import com.cdac.hms.DAO.ConcernDAO;
 import com.cdac.hms.DAO.InvoiceDAO;
+import com.cdac.hms.DAO.MessDAO;
 import com.cdac.hms.DAO.NoticeDAO;
 import com.cdac.hms.DAO.RoomDAO;
 import com.cdac.hms.DAO.RoomDetailDAO;
@@ -41,6 +42,8 @@ public class StudentService {
 	NoticeDAO noticeDAO;
 	@Autowired
 	RoomDetailDAO roomDetailDAO;
+	@Autowired
+	MessDAO messDAO;
 	
 	public Student addDetails(Student student) {
 		return studentDAO.save(student);
@@ -64,38 +67,44 @@ public class StudentService {
 		return student.get();
 	}
 
-	public Student allocateRoom(Room room,int userId) {
+	public Room allocateRoom(Room room,int userId) {
 		Optional<User> user = userDAO.findById(userId); 
 		Student student1 = studentDAO.findByUser(user);
 		
-		List<Student> list = new ArrayList<>();
-		list.add(student1);
-		room.setStudent(list);
+		List<User> list = new ArrayList<>();
+		list.addAll(room.getUsers());
+		list.add(user.get());
+		room.setUsers(list);
 		room.setNoOfOccupants(room.getNoOfOccupants() + 1);
 		
 		student1.setRoom(room);
-		return studentDAO.save(student1);
+		return roomDAO.save(room);
 	}
 
 	public Room getRoom(String roomName) throws Exception {
-		List<Room> rooms = roomDAO.findAll();
-		
+		RoomDetail roomDetail = roomDetailDAO.findByRoomName(roomName);
+		List<Room> rooms = roomDAO.findByRoomDetail(roomDetail);
+
 		for(Room room : rooms) {
 			if(room.getNoOfOccupants() < room.getRoomDetail().getMaxOccupants()) {
 				return room;
 			}
-		}
-		
+		}	
 		throw new Exception();
 	}
+	
+	public Student addMess(Mess mess, int userId) {
+		Optional<User> user = userDAO.findById(userId); 
+		Student student = studentDAO.findByUser(user);
+		student.setMess(mess);
+		return student;
+	}
 
-	public Invoice generateInvoice(Room room, Mess mess, Student student,int amount) {
+	public Invoice generateInvoice(Student student,int amount) {
 		Invoice invoice = new Invoice();
 		invoice.setInvoiceDate(new Date());
 		invoice.setAmountPaid(amount);
-		invoice.setRoom(room);
-		invoice.setMess(mess);
-		invoice.setStudent(student);
+		invoice.setUser(student.getUser());
 		int id = invoiceDAO.save(invoice).getInvoiceId();
 		invoice.setInvoiceNumber("CDAC" + (202203000 + id));
 		return invoiceDAO.save(invoice);
@@ -111,6 +120,10 @@ public class StudentService {
 
 	public List<RoomDetail> getPrices() {
 		return roomDetailDAO.findAll();
+	}
+
+	public List<Mess> getMess() {
+		return messDAO.findAll();
 	}
 
 }

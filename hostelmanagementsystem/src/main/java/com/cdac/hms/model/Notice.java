@@ -1,11 +1,14 @@
 package com.cdac.hms.model;
 
+import java.util.Date;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -23,9 +26,9 @@ public class Notice {
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	int noticeId;
+	@Temporal(TemporalType.DATE)
+	Date noticeDate = new Date();
 	String subject;
 	String description;
-	
-	@OneToOne
-	Hostel hostel;
+	int hostelId;
 }

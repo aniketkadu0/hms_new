@@ -32,10 +32,6 @@ public class Invoice {
 	String invoiceNumber;
 	int amountPaid;
 	@OneToOne
-	Room room;
-	@OneToOne
-	Mess mess;
-	@OneToOne
-	Student student;
+	User user;
 	
 }

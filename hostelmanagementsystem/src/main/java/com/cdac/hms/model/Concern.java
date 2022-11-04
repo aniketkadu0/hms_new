@@ -34,6 +34,6 @@ public class Concern {
 	String response;
 	
 	@OneToOne
-	Student student;
+	User user;
 
 }

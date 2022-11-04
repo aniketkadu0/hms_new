@@ -8,4 +8,6 @@ import com.cdac.hms.model.RoomDetail;
 @Repository
 public interface RoomDetailDAO extends JpaRepository<RoomDetail, Integer>{
 
+	RoomDetail findByRoomName(String roomName);
+
 }

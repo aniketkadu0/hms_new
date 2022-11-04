@@ -21,8 +21,8 @@ public class RoomDetail {
 	
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
-	int roomDetailId;
-	String roomName;
-	int price;
-	int maxOccupants;
+	private int roomDetailId;
+	private String roomName;
+	private int price;
+	private int maxOccupants;
 }

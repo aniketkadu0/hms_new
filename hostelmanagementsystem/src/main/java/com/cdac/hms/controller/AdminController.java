@@ -7,13 +7,14 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.cdac.hms.model.Mess;
-import com.cdac.hms.DAO.HostelDAO;
+import com.cdac.hms.model.Concern;
 import com.cdac.hms.model.Hostel;
 import com.cdac.hms.model.Notice;
 import com.cdac.hms.model.Room;
@@ -50,11 +51,11 @@ public class AdminController {
 		}
 	}
 	
-	@PostMapping("/addfacility")
+	@PostMapping("/addmess")
 	ResponseEntity<?> addFacility(@RequestBody Mess mess){
 		try {
 			Mess newMess = adminService.addMess(mess);
-			return ResponseEntity.status(HttpStatus.OK).header("Facility Added").body(newMess);
+			return ResponseEntity.status(HttpStatus.OK).header("Mess Added").body(newMess);
 		}
 		catch(Exception e) {
 			return ResponseEntity.internalServerError().body(e.getMessage());
@@ -66,17 +67,6 @@ public class AdminController {
 		try {
 			Notice newNotice = adminService.addNotice(notice);
 			return ResponseEntity.status(HttpStatus.OK).header("Notice Added").body(newNotice);
-		}
-		catch(Exception e) {
-			return ResponseEntity.internalServerError().body(e.getMessage());
-		}
-	}
-	
-	@PostMapping("/addmess")
-	ResponseEntity<?> addMess(@RequestBody Mess mess){
-		try {
-			Mess newMess = adminService.addMess(mess);
-			return ResponseEntity.status(HttpStatus.OK).header("Notice Added").body(newMess);
 		}
 		catch(Exception e) {
 			return ResponseEntity.internalServerError().body(e.getMessage());
@@ -99,6 +89,50 @@ public class AdminController {
 		try {
 			List<Hostel> hostel = adminService.getHostelData();
 			return ResponseEntity.status(HttpStatus.OK).body(hostel);
+		}
+		catch(Exception e) {
+			return ResponseEntity.internalServerError().body(e.getMessage());
+		}
+	}
+	
+	@GetMapping("/getrooms")
+	ResponseEntity<?> getRooms(){
+		try {
+			List<Room> rooms = adminService.getRooms();
+			return ResponseEntity.status(HttpStatus.OK).body(rooms);
+		}
+		catch(Exception e) {
+			return ResponseEntity.internalServerError().body(e.getMessage());
+		}
+	}
+	
+	@PutMapping("/deallocateroom")
+	ResponseEntity<?> deallocateRoom(@RequestBody Room room,@RequestParam int userId){
+		try {
+			Room newRoom = adminService.deallocateRoom(room,userId);
+			return ResponseEntity.status(HttpStatus.OK).header("Room is successfully deallocated").body(newRoom);
+		}
+		catch(Exception e) {
+			return ResponseEntity.internalServerError().body(e.getMessage());
+		}
+	}
+	
+	@GetMapping("/getnotices")
+	ResponseEntity<?> getNotices(){
+		try {
+			List<Notice> notices = adminService.getNotices();
+			return ResponseEntity.status(HttpStatus.OK).body(notices);
+		}
+		catch(Exception e) {
+			return ResponseEntity.internalServerError().body(e.getMessage());
+		}
+	}
+	
+	@PutMapping("/addresponse")
+	ResponseEntity<?> addResponse(@RequestBody Concern concern){
+		try {
+			Concern newConcern = adminService.addResponse(concern);
+			return ResponseEntity.status(HttpStatus.OK).header("Response Added").body(newConcern);
 		}
 		catch(Exception e) {
 			return ResponseEntity.internalServerError().body(e.getMessage());

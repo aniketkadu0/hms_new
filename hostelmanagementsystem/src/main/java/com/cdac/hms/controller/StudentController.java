@@ -65,7 +65,7 @@ public class StudentController {
 		}
 	}
 	
-	@GetMapping("getprices")
+	@GetMapping("/getprices")
 	ResponseEntity<?> getPrices(){
 		try {
 			List<RoomDetail> roomDetails = studentService.getPrices();
@@ -76,7 +76,18 @@ public class StudentController {
 		}
 	}
 	
-	@GetMapping("getroom")
+	@GetMapping("/getmess")
+	ResponseEntity<?> getMess(){
+		try {
+			List<Mess> messDetails = studentService.getMess();
+			return ResponseEntity.status(HttpStatus.OK).header("mess found").body(messDetails);
+		}
+		catch(Exception e) {
+			return ResponseEntity.internalServerError().body(e.getMessage());
+		}
+	}
+	
+	@GetMapping("/getroom")
 	ResponseEntity<?> getRoom(@RequestParam String roomName){
 		try {
 			Room Room = studentService.getRoom(roomName);
@@ -90,19 +101,34 @@ public class StudentController {
 	@PostMapping("/allocateroom")
 	ResponseEntity<?> allocateRoom(@RequestBody Room room,@RequestParam int userId){
 		try {
-			Student newStudent = studentService.allocateRoom(room,userId);
-			return ResponseEntity.status(HttpStatus.OK).header("Room is successfully allocated to student").body(newStudent);
+			Room newRoom = studentService.allocateRoom(room,userId);
+			return ResponseEntity.status(HttpStatus.OK).header("Room is successfully allocated to student").body(newRoom);
 		}
 		catch(Exception e) {
 			return ResponseEntity.internalServerError().body(e.getMessage());
 		}
 	}
 	
-	@PostMapping("/makepayment")
+	@PostMapping("/addmess")
+	ResponseEntity<?> addMess(@RequestBody Mess mess,@RequestParam int userId){
+		try {
+			Student student = studentService.addMess(mess,userId);
+			return ResponseEntity.status(HttpStatus.OK).header("Mess is successfully subscribed to student").body(student);
+		}
+		catch(Exception e) {
+			return ResponseEntity.internalServerError().body(e.getMessage());
+		}
+	}
+	
+	@GetMapping("/makepayment")
 	ResponseEntity<?> makePayment(@RequestBody Room room,@RequestBody Mess mess,
 			@RequestBody Student student,@RequestParam int amount){
+		
+		allocateRoom(room, student.getUser().getUserId());
+		addMess(mess,student.getUser().getUserId());
+		
 		try {
-			Invoice invoice = studentService.generateInvoice(room,mess,student,amount);
+			Invoice invoice = studentService.generateInvoice(student,amount);
 			return ResponseEntity.status(HttpStatus.OK).header("Invoice in created").body(invoice);
 		}
 		catch(Exception e) {
